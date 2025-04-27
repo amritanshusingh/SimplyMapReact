@@ -1,4 +1,4 @@
-import { Grid, Card, CardContent, Typography } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Box } from '@mui/material';
 import InsightsIcon from '@mui/icons-material/InsightsTwoTone';
 import TripOriginIcon from '@mui/icons-material/TripOriginTwoTone';
 import JoinInnerIcon from '@mui/icons-material/JoinInnerTwoTone';
@@ -42,17 +42,24 @@ const CardGridComponent: React.FC = () => {
   ];
 
   return (
-    <Grid container spacing={2} columns={12} justifyContent="center" component="div">
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          md: 'repeat(4, 1fr)',
+          lg: 'repeat(4, 1fr)',
+        },
+        gap: 2,
+      }}
+    >
       {cardData.map((card, index) => (
-        <Grid
-          item
-          component="div"
-          xs={12}
-          sm={6}
-          md={4}
-          lg={3}
+        <Box
           key={index}
-          sx={{ display: 'flex', flexDirection: 'column' }}
+          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
           <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }, maxWidth: 300 }}>
             <CardContent>
@@ -65,7 +72,7 @@ const CardGridComponent: React.FC = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
       ))}
     </Grid>
   );

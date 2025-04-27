@@ -1,6 +1,9 @@
 import { AppBar, Toolbar, IconButton, Typography, Switch, Box, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import TerrainIcon from '@mui/icons-material/TerrainTwoTone';
+import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactsIcon from '@mui/icons-material/Contacts';
 import React from 'react';
 
 interface AppBarProps {
@@ -33,7 +36,25 @@ const AppBarComponent: React.FC<AppBarProps> = ({ isDarkMode, handleModeChange, 
         ) : (
           <Box sx={{ display: 'flex', gap: 2 }}>
             {['Home', 'About', 'Contact'].map((text) => (
-              <Typography key={text} color="inherit">
+              <Typography
+                key={text}
+                color="inherit"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  transition: 'background-color 0.3s',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                  },
+                }}
+              >
+                {text === 'Home' ? <HomeIcon /> :
+                 text === 'About' ? <InfoIcon /> :
+                 text === 'Contact' ? <ContactsIcon /> : null}
                 {text}
               </Typography>
             ))}
