@@ -94,7 +94,7 @@ function App() {
             </IconButton>
           ) : (
             <Box sx={{ display: 'flex', gap: 2 }}>
-              {['Home', 'About', 'Contact'].map((text, index) => (
+              {['Home', 'About', 'Contact'].map((text) => (
                 <Button
                   key={text}
                   color="inherit"
@@ -117,7 +117,11 @@ function App() {
       <Box sx={{ p: 3, mt: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 'calc(100vh - 64px)', alignItems: 'center' }}>
         <Grid container spacing={2} columns={{ xs: 1, sm: 2, md: 4, lg: 8 }}>
           {Array.from({ length: 8 }).map((_, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index} sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <Grid
+              key={index}
+              component="div"
+              sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+            >
               <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
                 {index === 0 ? (
                   <CardContent>
