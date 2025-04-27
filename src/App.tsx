@@ -115,14 +115,24 @@ function App() {
         {drawerContent}
       </Drawer>
       <Box sx={{ p: 3, mt: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 'calc(100vh - 64px)', alignItems: 'center' }}>
-        <Grid container spacing={2} columns={{ xs: 1, sm: 2, md: 4, lg: 8 }}>
+        <Grid
+          container
+          spacing={2}
+          columns={12}
+          justifyContent="center"
+          component="div"
+        >
           {Array.from({ length: 8 }).map((_, index) => (
             <Grid
-              key={index}
               component="div"
-              sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              key={index}
+              sx={{ display: 'flex', flexDirection: 'column' }}
             >
-              <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
+              <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }, maxWidth: 300 }}>
                 {index === 0 ? (
                   <CardContent>
                     <InsightsIcon sx={{ fontSize: 40, mb: 1 }} />
@@ -170,7 +180,7 @@ function App() {
                       Subtract Feature (Minus)
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Subtract one polygon from another polygon. Resultant will be what remains of the first polygon. If polygons don't overlap, first polygon will be the result as it is.
+                      Subtract one polygon from another polygon. Resultant will be what remains of the first polygon.If polygons don't overlap, first polygon will be the result as it is.
                     </Typography>
                   </CardContent>
                 ) : index === 5 ? (
