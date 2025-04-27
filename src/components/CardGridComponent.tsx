@@ -6,8 +6,11 @@ import JoinFullIcon from '@mui/icons-material/JoinFullTwoTone';
 import TollTwoToneIcon from '@mui/icons-material/TollTwoTone';
 import ControlPointDuplicateRoundedIcon from '@mui/icons-material/ControlPointDuplicateRounded';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CardGridComponent: React.FC = () => {
+  const navigate = useNavigate();
+
   const cardData = [
     {
       icon: <InsightsIcon sx={{ fontSize: 40, mb: 1 }} />,
@@ -59,7 +62,8 @@ const CardGridComponent: React.FC = () => {
       {cardData.map((card, index) => (
         <Box
           key={index}
-          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+          onClick={() => navigate(`/${card.title.replace(/\s+/g, '-').toLowerCase()}`)}
         >
           <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }, maxWidth: 300 }}>
             <CardContent>
