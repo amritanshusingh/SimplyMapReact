@@ -8,6 +8,7 @@ import DrawerComponent from './components/DrawerComponent';
 import CardGridComponent from './components/CardGridComponent';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PointToLinePage from './components/PointToLinePage';
+import BufferPage from './components/BufferPage';
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -59,7 +60,8 @@ function App() {
             </Box>
           } />
           <Route path="/point-to-line-(kml)" element={<PointToLinePage />} />
-          {['Buffer', 'Intersection', 'Union', 'Subtract Feature (Minus)', 'Add Polygons'].map((title) => (
+          <Route path="/buffer" element={<BufferPage />} />
+          {['Intersection', 'Union', 'Subtract Feature (Minus)', 'Add Polygons'].map((title) => (
             <Route key={title} path={`/${title.replace(/\s+/g, '-').toLowerCase()}`} element={<div>{title} Landing Page</div>} />
           ))}
         </Routes>

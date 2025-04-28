@@ -9,7 +9,9 @@ const BufferPage: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
+        width: '100%',
         textAlign: 'center',
+        margin: '0 auto',
       }}
     >
       <Typography
