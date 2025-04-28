@@ -6,7 +6,7 @@ import themeConfig from './theme';
 import AppBarComponent from './components/AppBarComponent';
 import DrawerComponent from './components/DrawerComponent';
 import CardGridComponent from './components/CardGridComponent';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import PointToLinePage from './components/PointToLinePage';
 import BufferPage from './components/BufferPage';
 
@@ -52,20 +52,18 @@ function App() {
         toggleDrawer={toggleDrawer}
       />
       <DrawerComponent drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
-      <Router>
-        <Routes>
-          <Route path="/" element={
-            <Box sx={{ p: 3, mt: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 'calc(100vh - 64px)', alignItems: 'center' }}>
-              <CardGridComponent />
-            </Box>
-          } />
-          <Route path="/point-to-line-(kml)" element={<PointToLinePage />} />
-          <Route path="/buffer" element={<BufferPage />} />
-          {['Intersection', 'Union', 'Subtract Feature (Minus)', 'Add Polygons'].map((title) => (
-            <Route key={title} path={`/${title.replace(/\s+/g, '-').toLowerCase()}`} element={<div>{title} Landing Page</div>} />
-          ))}
-        </Routes>
-      </Router>
+      <Routes>
+        <Route path="/" element={
+          <Box sx={{ p: 3, mt: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 'calc(100vh - 64px)', alignItems: 'center' }}>
+            <CardGridComponent />
+          </Box>
+        } />
+        <Route path="/point-to-line-(kml)" element={<PointToLinePage />} />
+        <Route path="/buffer" element={<BufferPage />} />
+        {['Intersection', 'Union', 'Subtract Feature (Minus)', 'Add Polygons'].map((title) => (
+          <Route key={title} path={`/${title.replace(/\s+/g, '-').toLowerCase()}`} element={<div>{title} Landing Page</div>} />
+        ))}
+      </Routes>
     </ThemeProvider>
   );
 }

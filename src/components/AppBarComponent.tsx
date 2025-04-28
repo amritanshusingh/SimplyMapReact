@@ -5,6 +5,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface AppBarProps {
   isDarkMode: boolean;
@@ -20,7 +21,9 @@ const AppBarComponent: React.FC<AppBarProps> = ({ isDarkMode, handleModeChange, 
       <Toolbar>
         <TerrainIcon sx={{ mr: 1 }} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Simply Map
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            Simply Map
+          </Link>
         </Typography>
         <Switch checked={isDarkMode} onChange={handleModeChange} sx={{ mr: 2 }} />
         {theme ? (
@@ -52,10 +55,22 @@ const AppBarComponent: React.FC<AppBarProps> = ({ isDarkMode, handleModeChange, 
                   },
                 }}
               >
-                {text === 'Home' ? <HomeIcon /> :
-                 text === 'About' ? <InfoIcon /> :
-                 text === 'Contact' ? <ContactsIcon /> : null}
-                {text}
+                {text === 'Home' ? (
+                  <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <HomeIcon />
+                    {text}
+                  </Link>
+                ) : text === 'About' ? (
+                  <>
+                    <InfoIcon />
+                    {text}
+                  </>
+                ) : text === 'Contact' ? (
+                  <>
+                    <ContactsIcon />
+                    {text}
+                  </>
+                ) : null}
               </Typography>
             ))}
           </Box>
