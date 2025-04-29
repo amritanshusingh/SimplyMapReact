@@ -65,7 +65,7 @@ const CardGridComponent: React.FC = () => {
           sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
           onClick={() => navigate(`/${card.title.replace(/\s+/g, '-').toLowerCase()}`)}
         >
-          <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }, maxWidth: 300 }}>
+          <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }, width: '100%' }}>
             <CardContent>
               {card.icon}
               <Typography variant="h5" component="div">
