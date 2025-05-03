@@ -7,6 +7,19 @@ import { kml } from '@tmcw/togeojson';
 import { DOMParser } from '@xmldom/xmldom';
 import L from 'leaflet';
 
+// Override default Leaflet icon paths
+const defaultIcon = L.icon({
+  iconUrl: '/leaflet/images/marker-icon.png',
+  iconRetinaUrl: '/leaflet/images/marker-icon-2x.png',
+  shadowUrl: '/leaflet/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+L.Marker.prototype.options.icon = defaultIcon;
+
 const FitBoundsComponent = ({ geoJsonData }: { geoJsonData: any }) => {
   const map = useMap();
 
