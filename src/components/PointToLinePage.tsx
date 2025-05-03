@@ -36,21 +36,25 @@ const FitBoundsComponent = ({ geoJsonData }: { geoJsonData: any }) => {
 const PointToLinePage: React.FC = () => {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [showMap, setShowMap] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (file && file.type === 'application/vnd.google-earth.kml+xml') {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const text = reader.result as string;
-        const parser = new DOMParser();
-        const kmlDocument = parser.parseFromString(text, 'application/xml');
-        const geoJson = kml(kmlDocument);
-        setGeoJsonData(geoJson);
-      };
-      reader.readAsText(file);
-    } else {
-      console.error('Invalid file type. Please upload a KML file.');
+    if (file) {
+      setSelectedFileName(file.name); // Set the selected file name
+      if (file.type === 'application/vnd.google-earth.kml+xml') {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const text = reader.result as string;
+          const parser = new DOMParser();
+          const kmlDocument = parser.parseFromString(text, 'application/xml');
+          const geoJson = kml(kmlDocument);
+          setGeoJsonData(geoJson);
+        };
+        reader.readAsText(file);
+      } else {
+        console.error('Invalid file type. Please upload a KML file.');
+      }
     }
   }, []);
 
@@ -106,7 +110,7 @@ const PointToLinePage: React.FC = () => {
                 >
                   <input {...getInputProps()} />
                   <Typography variant="h6" color="text.secondary">
-                    {isDragActive ? 'Drop the files here...' : 'Drag & drop files here, or click to select files'}
+                    {selectedFileName ? `Selected file: ${selectedFileName}` : (isDragActive ? 'Drop the files here...' : 'Drag & drop files here, or click to select files')}
                   </Typography>
                 </Box>
               </Grid>
@@ -119,14 +123,14 @@ const PointToLinePage: React.FC = () => {
               color="primary"
               sx={{ padding: '10px 20px', fontSize: '16px' }}
             >
-              Process File
+              Convert to Line KML
             </Button>
           </Grid>
         </>
       ) : (
         <Grid sx={{ width: '100%' }}>
           <Box sx={{ height: '100vh', width: '100%' }}>
-            <Card sx={{ height: 'calc(100vh - 64px)', width: '100%', padding: '16px', marginTop: '64px' }}>
+            <Card sx={{ height: 'calc(100vh - 96px)', width: '100%', padding: '16px', marginTop: '64px' }}>
               <MapContainer center={[0, 0]} zoom={2} style={{ height: '100%', width: '100%' }}>
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
