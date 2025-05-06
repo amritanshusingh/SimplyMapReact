@@ -1,4 +1,5 @@
 import { CssBaseline } from '@mui/material';
+import {APIProvider, Map, MapCameraChangedEvent} from '@vis.gl/react-google-maps';
 import { Box } from '@mui/material';
 import { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -44,27 +45,29 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppBarComponent
-        isDarkMode={isDarkMode}
-        handleModeChange={handleModeChange}
-        toggleDrawer={toggleDrawer}
-      />
-      <DrawerComponent drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
-      <Routes>
-        <Route path="/" element={
-          <Box sx={{ p: 3, mt: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 'calc(100vh - 64px)', alignItems: 'center' }}>
-            <CardGridComponent />
-          </Box>
-        } />
-        <Route path="/point-to-line-(kml)" element={<PointToLinePage />} />
-        <Route path="/buffer" element={<BufferPage />} />
-        {['Intersection', 'Union', 'Subtract Feature (Minus)', 'Add Polygons'].map((title) => (
-          <Route key={title} path={`/${title.replace(/\s+/g, '-').toLowerCase()}`} element={<div>{title} Landing Page</div>} />
-        ))}
-      </Routes>
-    </ThemeProvider>
+    <APIProvider apiKey="AIzaSyCzMT9yhWI4ed2IPvyGNmAuoY9OSAcf3ig">
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppBarComponent
+          isDarkMode={isDarkMode}
+          handleModeChange={handleModeChange}
+          toggleDrawer={toggleDrawer}
+        />
+        <DrawerComponent drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
+        <Routes>
+          <Route path="/" element={
+            <Box sx={{ p: 3, mt: 8, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 'calc(100vh - 64px)', alignItems: 'center' }}>
+              <CardGridComponent />
+            </Box>
+          } />
+          <Route path="/point-to-line-(kml)" element={<PointToLinePage />} />
+          <Route path="/buffer" element={<BufferPage />} />
+          {['Intersection', 'Union', 'Subtract Feature (Minus)', 'Add Polygons'].map((title) => (
+            <Route key={title} path={`/${title.replace(/\s+/g, '-').toLowerCase()}`} element={<div>{title} Landing Page</div>} />
+          ))}
+        </Routes>
+      </ThemeProvider>
+    </APIProvider>
   );
 }
 
