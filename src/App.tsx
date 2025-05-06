@@ -45,7 +45,7 @@ function App() {
   };
 
   return (
-    <APIProvider apiKey="AIzaSyCzMT9yhWI4ed2IPvyGNmAuoY9OSAcf3ig">
+    <APIProvider apiKey="AIzaSyAixzBzLuKAHlqH4e5nhTtb7C1q3TolHW8">
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AppBarComponent
