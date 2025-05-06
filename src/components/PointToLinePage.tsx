@@ -1,37 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Typography, Grid, Card, Button } from '@mui/material';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
-import "leaflet/dist/leaflet.css";
+import { Map } from '@vis.gl/react-google-maps';
 import { kml } from '@tmcw/togeojson';
 import { DOMParser } from '@xmldom/xmldom';
-import L from 'leaflet';
-
-// Override default Leaflet icon paths
-const defaultIcon = L.icon({
-  iconUrl: '/leaflet/images/marker-icon.png',
-  iconRetinaUrl: '/leaflet/images/marker-icon-2x.png',
-  shadowUrl: '/leaflet/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-L.Marker.prototype.options.icon = defaultIcon;
-
-const FitBoundsComponent = ({ geoJsonData }: { geoJsonData: any }) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (geoJsonData) {
-      const layer = L.geoJSON(geoJsonData);
-      map.fitBounds(layer.getBounds());
-    }
-  }, [geoJsonData, map]);
-
-  return null;
-};
 
 const PointToLinePage: React.FC = () => {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -131,18 +103,14 @@ const PointToLinePage: React.FC = () => {
         <Grid sx={{ width: '100%' }}>
           <Box sx={{ height: '100vh', width: '100%' }}>
             <Card sx={{ height: 'calc(100vh - 96px)', width: '100%', padding: '16px', marginTop: '64px' }}>
-              <MapContainer center={[0, 0]} zoom={2} style={{ height: '100%', width: '100%' }}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-                />
-                {geoJsonData && (
-                  <>
-                    <GeoJSON data={geoJsonData} />
-                    <FitBoundsComponent geoJsonData={geoJsonData} />
-                  </>
-                )}
-              </MapContainer>
+              <Map
+                defaultZoom={13}
+                defaultCenter={{ lat: 0, lng: 0 }}
+                onCameraChanged={(ev) =>
+                  console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
+                }
+                style={{ width: '100%', height: '100%' }}
+              />
             </Card>
           </Box>
         </Grid>
