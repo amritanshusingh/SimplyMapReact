@@ -14,7 +14,7 @@ import BufferPage from './components/BufferPage';
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  const googleAPIkey = import.meta.env.VITE_GOOGLE_API_KEY;
   const theme = createTheme({
     palette: {
       mode: isDarkMode ? 'dark' : 'light',
@@ -45,7 +45,7 @@ function App() {
   };
 
   return (
-    <APIProvider apiKey="AIzaSyAixzBzLuKAHlqH4e5nhTtb7C1q3TolHW8">
+    <APIProvider apiKey={googleAPIkey}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AppBarComponent
