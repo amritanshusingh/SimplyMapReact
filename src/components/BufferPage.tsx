@@ -61,7 +61,8 @@ const BufferPage: React.FC = () => {
         Buffer Landing Page
       </Typography>
       <Map
-        mapId="DEMO_MAP_ID"
+        mapId={import.meta.env.VITE_MAP_ID}
+        mapTypeId="roadmap"
         defaultZoom={13}
         defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
         onCameraChanged={(ev) =>
