@@ -70,7 +70,7 @@ const BufferPage: React.FC = () => {
       <APIProvider apiKey={googleAPIkey}>
         <Map
           mapId={import.meta.env.VITE_MAP_ID}
-          mapTypeId="roadmap"
+          mapTypeId="terrain"
           defaultZoom={13}
           defaultCenter={{ lat: 25.54196730756527, lng: 77.36467900618521 }}
           onCameraChanged={(ev) =>
