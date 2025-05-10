@@ -12,8 +12,117 @@ import { Box, Typography, Grid, Card, Button } from "@mui/material";
 import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
 import { relative } from "path";
+import { Terrain } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles"; // Import useTheme to access the current theme
+
+const darkModeMapStyles = [
+  {
+    elementType: "geometry",
+    stylers: [{ color: "#242f3e" }],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#746855" }],
+  },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#242f3e" }],
+  },
+  {
+    featureType: "administrative",
+    elementType: "geometry",
+    stylers: [{ color: "#47526c" }],
+  },
+  {
+    featureType: "administrative.country",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d0d0d0" }],
+  },
+  {
+    featureType: "administrative.land_parcel",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#64779e" }],
+  },
+  {
+    featureType: "administrative.province",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#4b6878" }],
+  },
+  {
+    featureType: "landscape",
+    elementType: "geometry",
+    stylers: [{ color: "#28313c" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#665a48" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#023e58" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#3c7680" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#38414e" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#212a37" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#9ca5b3" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#746855" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#564d42" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#b0bec5" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: "#2f3948" }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d0d0d0" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#17263c" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#2e636e" }],
+  },
+];
 
 const PointToLinePage: React.FC = () => {
+  const theme = useTheme(); // Access the current theme
+  const isDarkTheme = theme.palette.mode === "dark"; // Determine if the theme is dark
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [showMap, setShowMap] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
@@ -109,11 +218,11 @@ const PointToLinePage: React.FC = () => {
           pickable: true,
           stroked: true,
           filled: true,
-          lineWidthScale: 20,
+          lineWidthScale: 10,
           lineWidthMinPixels: 2,
           getFillColor: [160, 160, 180, 200],
           getLineColor: [255, 100, 100],
-          getRadius: 100,
+          getRadius: 50,
           getLineWidth: 1,
           getElevation: 30,
         }),
@@ -221,7 +330,10 @@ const PointToLinePage: React.FC = () => {
                     initialViewState={viewState}
                     controller={true}
                   >
-                    <Map style={{ width: "100%", height: "100%" }} />
+                    <Map
+                      mapTypeId="terrain"
+                      styles={isDarkTheme ? darkModeMapStyles : undefined}
+                    />
                   </DeckGL>
                 </APIProvider>
               </div>
