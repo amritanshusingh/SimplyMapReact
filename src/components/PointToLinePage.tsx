@@ -11,6 +11,7 @@ import type { Color, PickingInfo, MapViewState } from "@deck.gl/core";
 import { Box, Typography, Grid, Card, Button } from "@mui/material";
 import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
+import { relative } from "path";
 
 const PointToLinePage: React.FC = () => {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -210,16 +211,20 @@ const PointToLinePage: React.FC = () => {
                 marginTop: "64px",
               }}
             >
-              <APIProvider apiKey={googleAPIkey}>
-                <DeckGL
-                  layers={layers}
-                  pickingRadius={5}
-                  initialViewState={viewState}
-                  controller={true}
-                >
-                  <Map style={{ width: "100%", height: "100%" }} />
-                </DeckGL>
-              </APIProvider>
+              <div
+                style={{ position: "relative", height: "100%", width: "100%" }} // Added styles to ensure proper containment
+              >
+                <APIProvider apiKey={googleAPIkey}>
+                  <DeckGL
+                    layers={layers}
+                    pickingRadius={5}
+                    initialViewState={viewState}
+                    controller={true}
+                  >
+                    <Map style={{ width: "100%", height: "100%" }} />
+                  </DeckGL>
+                </APIProvider>
+              </div>
             </Card>
           </Box>
         </Grid>
