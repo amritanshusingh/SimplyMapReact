@@ -11,7 +11,6 @@ import type { Color, PickingInfo, MapViewState } from "@deck.gl/core";
 import { Box, Typography, Grid, Card, Button } from "@mui/material";
 import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
-import { FeatureCollection } from "geojson";
 
 const PointToLinePage: React.FC = () => {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -55,48 +54,70 @@ const PointToLinePage: React.FC = () => {
     maxZoom: 15,
   };
 
-  const testGeoJsonData: FeatureCollection = {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [77.3622391386402, 25.545883678437498], // Corrected to [longitude, latitude]
-        },
-        properties: {
-          name: "Opera House",
-        },
-      },
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [77.35339857861157, 25.539765770332657], // Corrected to [longitude, latitude]
-        },
-        properties: {
-          name: "Taronga Zoo",
-        },
-      },
-    ],
-  };
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
-  const layers = [
-    new GeoJsonLayer({
-      id: "geojson-layer",
-      data: testGeoJsonData,
-      pickable: true,
-      stroked: true,
-      filled: true,
-      lineWidthScale: 20,
-      lineWidthMinPixels: 2,
-      getFillColor: [160, 160, 180, 200],
-      getLineColor: [255, 100, 100],
-      getRadius: 100,
-      getLineWidth: 1,
-      getElevation: 30,
-    }),
-  ];
+  useEffect(() => {
+    if (
+      geoJsonData &&
+      geoJsonData.features &&
+      geoJsonData.features.length > 0
+    ) {
+      const coordinates = geoJsonData.features.flatMap((feature: any) => {
+        if (feature.geometry.type === "Point") {
+          return [feature.geometry.coordinates];
+        } else if (feature.geometry.type === "LineString") {
+          return feature.geometry.coordinates;
+        } else if (feature.geometry.type === "Polygon") {
+          return feature.geometry.coordinates.flat();
+        }
+        return [];
+      });
+
+      if (coordinates.length > 0) {
+        const lats = coordinates.map((coord: [number, number]) => coord[1]);
+        const lngs = coordinates.map((coord: [number, number]) => coord[0]);
+        const minLat = Math.min(...lats);
+        const maxLat = Math.max(...lats);
+        const minLng = Math.min(...lngs);
+        const maxLng = Math.max(...lngs);
+
+        setViewState({
+          latitude: (minLat + maxLat) / 2,
+          longitude: (minLng + maxLng) / 2,
+          zoom: Math.max(
+            2,
+            Math.min(
+              15,
+              Math.floor(
+                8 - Math.log2(Math.max(maxLat - minLat, maxLng - minLng))
+              )
+            )
+          ),
+          minZoom: 2,
+          maxZoom: 15,
+        });
+      }
+    }
+  }, [geoJsonData]);
+
+  const layers = geoJsonData
+    ? [
+        new GeoJsonLayer({
+          id: "geojson-layer",
+          data: geoJsonData,
+          pickable: true,
+          stroked: true,
+          filled: true,
+          lineWidthScale: 20,
+          lineWidthMinPixels: 2,
+          getFillColor: [160, 160, 180, 200],
+          getLineColor: [255, 100, 100],
+          getRadius: 100,
+          getLineWidth: 1,
+          getElevation: 30,
+        }),
+      ]
+    : [];
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -193,7 +214,7 @@ const PointToLinePage: React.FC = () => {
                 <DeckGL
                   layers={layers}
                   pickingRadius={5}
-                  initialViewState={INITIAL_VIEW_STATE}
+                  initialViewState={viewState}
                   controller={true}
                 >
                   <Map style={{ width: "100%", height: "100%" }} />
