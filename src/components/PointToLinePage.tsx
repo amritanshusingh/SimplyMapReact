@@ -1,18 +1,12 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import {
-  APIProvider,
-  Map,
-  MapCameraChangedEvent,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { DeckGL } from "@deck.gl/react";
 import { GeoJsonLayer } from "@deck.gl/layers";
-import type { Color, PickingInfo, MapViewState } from "@deck.gl/core";
+import type { MapViewState } from "@deck.gl/core";
 import { Box, Typography, Grid, Card, Button } from "@mui/material";
 import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
-import { relative } from "path";
-import { Terrain } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles"; // Import useTheme to access the current theme
 import { darkModeMapStyles } from "../theme/mapStyles"; // Import dark mode map styles
 
