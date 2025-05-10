@@ -5,9 +5,13 @@ import {
   Map,
   MapCameraChangedEvent,
 } from "@vis.gl/react-google-maps";
+import { DeckGL } from "@deck.gl/react";
+import { GeoJsonLayer } from "@deck.gl/layers";
+import type { Color, PickingInfo, MapViewState } from "@deck.gl/core";
 import { Box, Typography, Grid, Card, Button } from "@mui/material";
 import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
+import { FeatureCollection } from "geojson";
 
 const PointToLinePage: React.FC = () => {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -42,6 +46,57 @@ const PointToLinePage: React.FC = () => {
       console.error("No GeoJSON data available to render the map.");
     }
   };
+
+  const INITIAL_VIEW_STATE: MapViewState = {
+    latitude: 25.5428, // Centered between the two points
+    longitude: 77.3578, // Centered between the two points
+    zoom: 15,
+    minZoom: 2,
+    maxZoom: 15,
+  };
+
+  const testGeoJsonData: FeatureCollection = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [77.3622391386402, 25.545883678437498], // Corrected to [longitude, latitude]
+        },
+        properties: {
+          name: "Opera House",
+        },
+      },
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [77.35339857861157, 25.539765770332657], // Corrected to [longitude, latitude]
+        },
+        properties: {
+          name: "Taronga Zoo",
+        },
+      },
+    ],
+  };
+
+  const layers = [
+    new GeoJsonLayer({
+      id: "geojson-layer",
+      data: testGeoJsonData,
+      pickable: true,
+      stroked: true,
+      filled: true,
+      lineWidthScale: 20,
+      lineWidthMinPixels: 2,
+      getFillColor: [160, 160, 180, 200],
+      getLineColor: [255, 100, 100],
+      getRadius: 100,
+      getLineWidth: 1,
+      getElevation: 30,
+    }),
+  ];
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -135,22 +190,14 @@ const PointToLinePage: React.FC = () => {
               }}
             >
               <APIProvider apiKey={googleAPIkey}>
-                <Map
-                  defaultZoom={13}
-                  defaultCenter={{
-                    lat: 25.54196730756527,
-                    lng: 77.36467900618521,
-                  }}
-                  onCameraChanged={(ev) =>
-                    console.log(
-                      "camera changed:",
-                      ev.detail.center,
-                      "zoom:",
-                      ev.detail.zoom
-                    )
-                  }
-                  style={{ width: "100%", height: "100%" }}
-                />
+                <DeckGL
+                  layers={layers}
+                  pickingRadius={5}
+                  initialViewState={INITIAL_VIEW_STATE}
+                  controller={true}
+                >
+                  <Map style={{ width: "100%", height: "100%" }} />
+                </DeckGL>
               </APIProvider>
             </Card>
           </Box>
