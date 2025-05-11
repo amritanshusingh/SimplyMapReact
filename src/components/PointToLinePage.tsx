@@ -9,6 +9,7 @@ import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
 import { useTheme } from "@mui/material/styles"; // Import useTheme to access the current theme
 import { darkModeMapStyles } from "../theme/mapStyles"; // Import dark mode map styles
+import { pointKMLtoLineKMLConverter } from "../som/som"; // Import the function
 
 const PointToLinePage: React.FC = () => {
   const theme = useTheme(); // Access the current theme
@@ -22,6 +23,9 @@ const PointToLinePage: React.FC = () => {
     const file = acceptedFiles[0];
     if (file) {
       setSelectedFileName(file.name); // Set the selected file name
+      pointKMLtoLineKMLConverter(file).then((lineKML) => {
+        console.log(lineKML); // this is valid converted lin kml from point kml
+      });
       if (file.type === "application/vnd.google-earth.kml+xml") {
         const reader = new FileReader();
         reader.onload = () => {
