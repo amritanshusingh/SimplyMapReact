@@ -26,6 +26,7 @@ const PointToLinePage: React.FC = () => {
       pointKMLtoLineKMLConverter(file).then((lineKML) => {
         if (lineKML) {
           const trimmedKML = lineKML.trim(); // Trim the KML string
+          localStorage.setItem("trimmedLineKML", trimmedKML); // Store the trimmed KML in local storage
           const parser = new DOMParser();
           const kmlDocument = parser.parseFromString(
             trimmedKML,
@@ -228,6 +229,37 @@ const PointToLinePage: React.FC = () => {
                     />
                   </DeckGL>
                 </APIProvider>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    position: "absolute",
+                    top: "16px",
+                    right: "16px",
+                    backdropFilter: "blur(8px)",
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                  onClick={() => {
+                    const trimmedLineKML = localStorage.getItem("trimmedLineKML");
+                    if (trimmedLineKML) {
+                      const blob = new Blob([trimmedLineKML], { type: "application/vnd.google-earth.kml+xml" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = "line-data.kml";
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    } else {
+                      console.error("No KML data available to download.");
+                    }
+                  }}
+                >
+                  <span className="material-icons">file_download</span>
+                  Download Line Data KML
+                </Button>
               </div>
             </Card>
           </Box>

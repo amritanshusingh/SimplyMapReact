@@ -16,6 +16,10 @@ export function pointKMLtoLineKMLConverter(file: Blob): Promise<string | null> {
           const kmlDocument = parser.parseFromString(text, "application/xml");
           const geoJson = kml(kmlDocument);
           const lineKML = geoJsonToLineKML(geoJson);
+          const trimmedLineKML = lineKML?.trim(); // Trim the KML string
+          if (trimmedLineKML) {
+            localStorage.setItem("trimmedLineKML", trimmedLineKML); // Save to browser's cache
+          }
           resolve(lineKML);
         } catch (error) {
           console.error("Error processing the KML file:", error);
