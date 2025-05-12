@@ -3,7 +3,11 @@ import { kml } from "@tmcw/togeojson";
 
 export function pointKMLtoLineKMLConverter(file: Blob): Promise<string | null> {
   return new Promise((resolve, reject) => {
-    if (file.type === "application/vnd.google-earth.kml+xml") {
+    const fileName = (file as File)?.name || ""; // Safely access the name property with a fallback
+    if (
+      file.type === "application/vnd.google-earth.kml+xml" ||
+      fileName.endsWith(".kml")
+    ) {
       const reader = new FileReader();
       reader.onload = () => {
         try {

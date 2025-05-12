@@ -24,21 +24,19 @@ const PointToLinePage: React.FC = () => {
     if (file) {
       setSelectedFileName(file.name); // Set the selected file name
       pointKMLtoLineKMLConverter(file).then((lineKML) => {
-        console.log(lineKML); // this is valid converted lin kml from point kml
-      });
-      if (file.type === "application/vnd.google-earth.kml+xml") {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const text = reader.result as string;
+        if (lineKML) {
+          const trimmedKML = lineKML.trim(); // Trim the KML string
           const parser = new DOMParser();
-          const kmlDocument = parser.parseFromString(text, "application/xml");
+          const kmlDocument = parser.parseFromString(
+            trimmedKML,
+            "application/xml"
+          );
           const geoJson = kml(kmlDocument);
           setGeoJsonData(geoJson);
-        };
-        reader.readAsText(file);
-      } else {
-        console.error("Invalid file type. Please upload a KML file.");
-      }
+        } else {
+          console.error("lineKML is null and cannot be parsed.");
+        }
+      });
     }
   }, []);
 
