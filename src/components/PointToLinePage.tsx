@@ -5,6 +5,7 @@ import { DeckGL } from "@deck.gl/react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import type { MapViewState } from "@deck.gl/core";
 import { Box, Typography, Grid, Card, Button } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
 import { useTheme } from "@mui/material/styles"; // Import useTheme to access the current theme
@@ -237,15 +238,18 @@ const PointToLinePage: React.FC = () => {
                     top: "16px",
                     right: "16px",
                     backdropFilter: "blur(8px)",
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    backgroundColor: "rgba(255, 255, 255, 0.26)",
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
                   }}
                   onClick={() => {
-                    const trimmedLineKML = localStorage.getItem("trimmedLineKML");
+                    const trimmedLineKML =
+                      localStorage.getItem("trimmedLineKML");
                     if (trimmedLineKML) {
-                      const blob = new Blob([trimmedLineKML], { type: "application/vnd.google-earth.kml+xml" });
+                      const blob = new Blob([trimmedLineKML], {
+                        type: "application/vnd.google-earth.kml+xml",
+                      });
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
@@ -257,7 +261,7 @@ const PointToLinePage: React.FC = () => {
                     }
                   }}
                 >
-                  <span className="material-icons">file_download</span>
+                  <FileDownloadIcon />
                   Download Line Data KML
                 </Button>
               </div>
