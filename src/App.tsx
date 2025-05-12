@@ -9,6 +9,7 @@ import CardGridComponent from "./components/CardGridComponent";
 import { Routes, Route } from "react-router-dom";
 import PointToLinePage from "./components/PointToLinePage";
 import BufferPage from "./components/BufferPage";
+import LineToPolygonPage from "./components/LineToPolygonPage";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -79,6 +80,7 @@ function App() {
         />
         <Route path="/point-to-line-(kml)" element={<PointToLinePage />} />
         <Route path="/buffer" element={<BufferPage />} />
+        <Route path="/line-to-polygon-(kml)" element={<LineToPolygonPage />} />
         {[
           "Intersection",
           "Union",
