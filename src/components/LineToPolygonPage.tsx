@@ -10,6 +10,7 @@ import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
 import { useTheme } from "@mui/material/styles";
 import { darkModeMapStyles } from "../theme/mapStyles";
+import { lineKMLtoPolygonKMLConverter } from "../som/som";
 
 const LineToPolygonPage: React.FC = () => {
   const theme = useTheme();
@@ -23,20 +24,21 @@ const LineToPolygonPage: React.FC = () => {
     const file = acceptedFiles[0];
     if (file) {
       setSelectedFileName(file.name);
-      // Placeholder for line-to-polygon conversion logic
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const text = reader.result as string;
+      lineKMLtoPolygonKMLConverter(file).then((polygonKML) => {
+        if (polygonKML) {
+          const trimmedPolygonKML = polygonKML?.trim();
+          localStorage.setItem("trimmedPolygonKML", trimmedPolygonKML);
           const parser = new DOMParser();
-          const kmlDocument = parser.parseFromString(text, "application/xml");
+          const kmlDocument = parser.parseFromString(
+            trimmedPolygonKML,
+            "application/xml"
+          );
           const geoJson = kml(kmlDocument);
           setGeoJsonData(geoJson);
-        } catch (error) {
-          console.error("Error processing the KML file:", error);
+        } else {
+          console.log("polygonKML is null and cannot be parsed.");
         }
-      };
-      reader.readAsText(file);
+      });
     }
   }, []);
 

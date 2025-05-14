@@ -54,6 +54,7 @@ export function lineKMLtoPolygonKMLConverter(
           const parser = new DOMParser();
           const kmlDocument = parser.parseFromString(text, "application/xml");
           const geoJson = kml(kmlDocument);
+          console.log(geoJson);
           const polygonKML = geoJsonToPolygonKML(geoJson);
           resolve(polygonKML);
         } catch (error) {
