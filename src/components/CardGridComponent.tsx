@@ -7,6 +7,7 @@ import TollTwoToneIcon from "@mui/icons-material/TollTwoTone";
 import ControlPointDuplicateRoundedIcon from "@mui/icons-material/ControlPointDuplicateRounded";
 import BorderStyleIcon from "@mui/icons-material/BorderStyle";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
+import BlurOnIcon from "@mui/icons-material/BlurOn"; // Import the new icon
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -57,6 +58,12 @@ const CardGridComponent: React.FC = () => {
       title: "Add Polygons",
       description:
         "Add two polygons. Different from union, it adds two polygons even if they don't intersect each other. Resultant is a single shapefile/kml file containing both polygons.",
+    },
+    {
+      icon: <BlurOnIcon sx={{ fontSize: 40, mb: 1 }} />,
+      title: "Download DEM",
+      description:
+        "Download Digital Elevation Model for your area. Upload Polygon KML of your area and Download DEM for the same",
     },
   ];
 

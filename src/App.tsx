@@ -10,6 +10,7 @@ import { Routes, Route } from "react-router-dom";
 import PointToLinePage from "./components/PointToLinePage";
 import BufferPage from "./components/BufferPage";
 import LineToPolygonPage from "./components/LineToPolygonPage";
+import DownloadDEMPage from "./components/DownloadDEMPage";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -93,6 +94,7 @@ function App() {
             element={<div>{title} Landing Page</div>}
           />
         ))}
+        <Route path="/download-dem" element={<DownloadDEMPage />} />
       </Routes>
     </ThemeProvider>
   );
