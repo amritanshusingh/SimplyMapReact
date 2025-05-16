@@ -11,6 +11,8 @@ import { DOMParser } from "@xmldom/xmldom";
 import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
 import bbox from "@turf/bbox";
 import { fromArrayBuffer } from "geotiff";
+import DownloadIcon from "@mui/icons-material/Download";
+import Button from "@mui/material/Button";
 
 const INITIAL_VIEW_STATE: MapViewState = {
   latitude: 25.5428,
@@ -43,6 +45,45 @@ const DownloadDEMPage: React.FC = () => {
       reader.readAsText(file);
     }
   }, []);
+
+  // Helper to get the current DEM cache key
+  function getDEMCacheKey() {
+    if (
+      geoJsonData &&
+      geoJsonData.features &&
+      geoJsonData.features.length > 0
+    ) {
+      const [west, south, east, north] = bbox(geoJsonData);
+      return `dem_${south}_${north}_${west}_${east}`;
+    }
+    return null;
+  }
+
+  // Download handler
+  const handleDownloadDEM = () => {
+    const cacheKey = getDEMCacheKey();
+    if (!cacheKey) return;
+    const cached = localStorage.getItem(cacheKey);
+    if (!cached) return;
+    // Convert base64 to Blob
+    const binaryString = atob(cached);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: "image/tiff" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "dem.tif";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
 
   // Fetch DEM GeoTIFF from API when geoJsonData is available
   React.useEffect(() => {
@@ -247,8 +288,36 @@ const DownloadDEMPage: React.FC = () => {
                 width: "100%",
                 padding: "16px",
                 marginTop: "64px",
+                position: "relative",
               }}
             >
+              {/* Download Button */}
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<DownloadIcon />}
+                onClick={handleDownloadDEM}
+                sx={{
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                  zIndex: 10,
+                  background:
+                    "linear-gradient(90deg, #1976d2 0%, #2196f3 100%)",
+                  color: "#fff",
+                  fontWeight: 600,
+                  boxShadow: 2,
+                  "&:hover": {
+                    background:
+                      "linear-gradient(90deg, #1565c0 0%, #1976d2 100%)",
+                  },
+                }}
+                disabled={
+                  !getDEMCacheKey() || !localStorage.getItem(getDEMCacheKey()!)
+                }
+              >
+                Download DEM
+              </Button>
               <div
                 style={{ position: "relative", height: "100%", width: "100%" }}
               >
