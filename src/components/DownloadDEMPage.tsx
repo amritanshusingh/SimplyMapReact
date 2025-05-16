@@ -10,6 +10,7 @@ import { kml } from "@tmcw/togeojson";
 import { DOMParser } from "@xmldom/xmldom";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import bbox from "@turf/bbox";
+import { GeoTIFF } from "geotiff";
 
 const INITIAL_VIEW_STATE: MapViewState = {
   latitude: 25.5428, // Centered between the two points
@@ -24,6 +25,7 @@ const DownloadDEMPage: React.FC = () => {
   const [fileUploaded, setFileUploaded] = React.useState(false);
   const [geoJsonData, setGeoJsonData] = React.useState<any>(null);
   const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
+  const [parsedBitmapLayer, setParsedBitmapLayer] = React.useState<any>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
@@ -40,6 +42,102 @@ const DownloadDEMPage: React.FC = () => {
       };
       reader.readAsText(file);
     }
+  }, []);
+
+  React.useEffect(() => {
+    async function parseBitmapLayer() {
+      try {
+        const response = await fetch("/test.tif");
+        if (!response.ok) {
+          console.error("Failed to fetch test.tif:", response.statusText);
+          setParsedBitmapLayer(null);
+          return;
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        // Use GeoTIFF['fromArrayBuffer'] or GeoTIFF['parse'] for compatibility
+        let tiff;
+        if (typeof (GeoTIFF as any)["fromArrayBuffer"] === "function") {
+          tiff = await (GeoTIFF as any)["fromArrayBuffer"](arrayBuffer);
+        } else if (typeof (GeoTIFF as any).parse === "function") {
+          tiff = await (GeoTIFF as any).parse(arrayBuffer);
+        } else {
+          throw new Error(
+            "GeoTIFF.fromArrayBuffer/parse is not available. GeoTIFF API may have changed."
+          );
+        }
+        const image = await tiff.getImage();
+        const rasters = await image.readRasters({ interleave: true });
+        const width = image.getWidth();
+        const height = image.getHeight();
+        // Get bounds from GeoTIFF (if available), else use a default
+        let bounds: [number, number, number, number] = [77.0, 25.0, 78.0, 26.0];
+        const tiepoint = image.getTiePoints?.()[0];
+        const pixelScale = image.getFileDirectory().ModelPixelScale;
+        if (tiepoint && pixelScale) {
+          const minX = tiepoint.x;
+          const maxY = tiepoint.y;
+          const pixelSizeX = pixelScale[0];
+          const pixelSizeY = pixelScale[1];
+          const maxX = minX + width * pixelSizeX;
+          const minY = maxY - height * pixelSizeY;
+          bounds = [minX, minY, maxX, maxY];
+        }
+        // Convert raster to ImageData (RGBA)
+        let imageData;
+        if (rasters.length === width * height * 4) {
+          // RGBA
+          imageData = new ImageData(
+            new Uint8ClampedArray(rasters),
+            width,
+            height
+          );
+        } else if (rasters.length === width * height * 3) {
+          // RGB, add alpha
+          const rgba = new Uint8ClampedArray(width * height * 4);
+          for (let i = 0; i < width * height; i++) {
+            rgba[i * 4] = rasters[i * 3];
+            rgba[i * 4 + 1] = rasters[i * 3 + 1];
+            rgba[i * 4 + 2] = rasters[i * 3 + 2];
+            rgba[i * 4 + 3] = 255;
+          }
+          imageData = new ImageData(rgba, width, height);
+        } else {
+          // Single band (grayscale)
+          const rgba = new Uint8ClampedArray(width * height * 4);
+          for (let i = 0; i < width * height; i++) {
+            const v = rasters[i];
+            rgba[i * 4] = v;
+            rgba[i * 4 + 1] = v;
+            rgba[i * 4 + 2] = v;
+            rgba[i * 4 + 3] = 255;
+          }
+          imageData = new ImageData(rgba, width, height);
+        }
+        // Draw to canvas and get data URL
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.putImageData(imageData, 0, 0);
+          const dataUrl = canvas.toDataURL();
+          setParsedBitmapLayer({
+            id: "bitmap-layer",
+            bounds,
+            image: dataUrl,
+            opacity: 0.7,
+            visible: true,
+          });
+        } else {
+          console.error("Could not get 2D context for canvas");
+          setParsedBitmapLayer(null);
+        }
+      } catch (err) {
+        console.error("Error loading or parsing test.tif:", err);
+        setParsedBitmapLayer(null);
+      }
+    }
+    parseBitmapLayer();
   }, []);
 
   React.useEffect(() => {
