@@ -13,6 +13,7 @@ import bbox from "@turf/bbox";
 import { fromArrayBuffer } from "geotiff";
 import DownloadIcon from "@mui/icons-material/Download";
 import Button from "@mui/material/Button";
+import LinearProgress from '@mui/material/LinearProgress';
 
 const INITIAL_VIEW_STATE: MapViewState = {
   latitude: 25.5428,
@@ -28,6 +29,7 @@ const DownloadDEMPage: React.FC = () => {
   const [geoJsonData, setGeoJsonData] = React.useState<any>(null);
   const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
   const [bitmapLayer, setBitmapLayer] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
@@ -93,6 +95,7 @@ const DownloadDEMPage: React.FC = () => {
         geoJsonData.features &&
         geoJsonData.features.length > 0
       ) {
+        setLoading(true);
         try {
           // Get bounding box from polygon
           const [west, south, east, north] = bbox(geoJsonData);
@@ -186,6 +189,8 @@ const DownloadDEMPage: React.FC = () => {
         } catch (error) {
           console.error("Error fetching DEM or creating BitmapLayer:", error);
           setBitmapLayer(null);
+        } finally {
+          setLoading(false);
         }
       }
     }
@@ -318,6 +323,12 @@ const DownloadDEMPage: React.FC = () => {
               >
                 Download DEM
               </Button>
+              {/* LinearProgress loading bar */}
+              {loading && (
+                <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 20 }}>
+                  <LinearProgress color="primary" />
+                </Box>
+              )}
               <div
                 style={{ position: "relative", height: "100%", width: "100%" }}
               >
