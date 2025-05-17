@@ -13,7 +13,11 @@ import bbox from "@turf/bbox";
 import { fromArrayBuffer } from "geotiff";
 import DownloadIcon from "@mui/icons-material/Download";
 import Button from "@mui/material/Button";
-import LinearProgress from '@mui/material/LinearProgress';
+import LinearProgress from "@mui/material/LinearProgress";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import CloseIcon from "@mui/icons-material/Close";
+import ReplayIcon from "@mui/icons-material/Replay";
 
 const INITIAL_VIEW_STATE: MapViewState = {
   latitude: 25.5428,
@@ -30,6 +34,8 @@ const DownloadDEMPage: React.FC = () => {
   const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
   const [bitmapLayer, setBitmapLayer] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [retryKey, setRetryKey] = React.useState(0);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
@@ -96,6 +102,7 @@ const DownloadDEMPage: React.FC = () => {
         geoJsonData.features.length > 0
       ) {
         setLoading(true);
+        setError(null);
         try {
           // Get bounding box from polygon
           const [west, south, east, north] = bbox(geoJsonData);
@@ -186,16 +193,20 @@ const DownloadDEMPage: React.FC = () => {
               opacity: 0.7,
             })
           );
-        } catch (error) {
+          setError(null);
+        } catch (error: any) {
           console.error("Error fetching DEM or creating BitmapLayer:", error);
           setBitmapLayer(null);
+          setError(
+            "Failed to download DEM. Please check your connection or try again."
+          );
         } finally {
           setLoading(false);
         }
       }
     }
     fetchDEMAndCreateBitmapLayer();
-  }, [geoJsonData]);
+  }, [geoJsonData, retryKey]);
 
   React.useEffect(() => {
     if (
@@ -325,8 +336,58 @@ const DownloadDEMPage: React.FC = () => {
               </Button>
               {/* LinearProgress loading bar */}
               {loading && (
-                <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 20 }}>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    zIndex: 20,
+                  }}
+                >
                   <LinearProgress color="primary" />
+                </Box>
+              )}
+              {/* Error Overlay */}
+              {error && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    bgcolor: "rgba(255,255,255,0.85)",
+                    zIndex: 30,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Stack spacing={2} alignItems="center">
+                    <Alert severity="error" sx={{ fontSize: 18, py: 2, px: 4 }}>
+                      {error}
+                    </Alert>
+                    <Stack direction="row" spacing={2}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<ReplayIcon />}
+                        onClick={() => setRetryKey((k) => k + 1)}
+                      >
+                        Retry
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        startIcon={<CloseIcon />}
+                        onClick={() => setError(null)}
+                      >
+                        Close
+                      </Button>
+                    </Stack>
+                  </Stack>
                 </Box>
               )}
               <div
